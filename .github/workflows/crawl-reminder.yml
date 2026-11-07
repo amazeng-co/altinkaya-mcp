@@ -1,0 +1,30 @@
+name: Monthly catalog refresh reminder
+
+# The crawl needs a maintainer's logged-in Chrome session, so it runs locally.
+# This workflow only opens an issue as a reminder once a month.
+on:
+  schedule:
+    - cron: "0 7 1 * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="Refresh catalog data ($(date -u +%Y-%m))"
+          if gh issue list -R "$GITHUB_REPOSITORY" --state open --search "$title in:title" --json number --jq 'length' | grep -qv '^0$'; then
+            exit 0
+          fi
+          gh issue create -R "$GITHUB_REPOSITORY" --title "$title" --label data --body "Time for the monthly crawl.
+
+          1. Enable remote debugging in Chrome: chrome://inspect/#remote-debugging
+          2. \`npm run crawl\`
+          3. Review the added/removed/changed summary and open a PR with \`data/catalog.json\`.
+
+          See CONTRIBUTING.md → Catalog data."

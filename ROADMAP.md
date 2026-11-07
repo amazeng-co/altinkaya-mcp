@@ -7,10 +7,11 @@ comparison, and CAD files (STEP / PDF / DXF).
 ## Architecture
 
 ```
-GitHub Actions (daily cron)
-  crawler: sitemap.xml → /en/products/* pages → Next.js RSC payload (structured JSON)
-         + category pages → dimension comparison tables
-  → data/catalog.json  (validated with the shared zod schema, committed + attached to a release)
+Maintainer's machine (monthly, reminded by a scheduled issue)
+  crawler drives a tab in the maintainer's Chrome over CDP:
+  /tr/categories/enclosures → category tree → leaf category pages → product pages
+  → Next.js flight payload (structured JSON) + English names from /en/ page titles
+  → data/catalog.json  (validated with the shared zod schema, reviewed and merged as a PR)
 
 MCP server (runs locally via npx / .mcpb / Docker, or remotely over HTTP)
   1. fetch latest catalog.json from GitHub (ETag, conditional GET)
@@ -20,8 +21,9 @@ MCP server (runs locally via npx / .mcpb / Docker, or remotely over HTTP)
 ```
 
 Why this shape: Altınkaya has no public parametric API (server-rendered Next.js over Odoo,
-`/api` disallowed in robots.txt), the catalog is small, and crawling once in CI keeps load off
-the site and makes every client fast and offline-capable.
+`/api` disallowed in robots.txt), the catalog is gated behind sign-in for browsing, and new
+models appear slowly. A monthly, rate-limited crawl through a maintainer's own session keeps load
+off the site, and shipping the result as a file makes every client fast and offline-capable.
 
 ## Phase 0: Repository foundations
 
@@ -35,15 +37,18 @@ the site and makes every client fast and offline-capable.
 
 ## Phase 1: Crawler and catalog schema
 
-- [ ] `Enclosure` zod schema shared by crawler and server: code, name, family, category path,
-      variants (code, barcode, attributes), outer dimensions A×B×C, raw drawing dimensions
-      (B1…E4, P1, P2), material, color, IP rating, operating temperature, flame rating,
-      package qty, documents (STEP/PDF/DXF URLs), images, product URL, multilingual names
-- [ ] Parse the RSC payload (`variantMap`, `attributeLines`, spec table) instead of scraping text
-- [ ] Category dimension tables + technical drawing per family; a reviewed mapping file turns
-      drawing letters into semantic inner dimensions (usable width/length/height)
-- [ ] Polite crawling: concurrency limit, delay, retries, identifiable User-Agent, robots.txt
-- [ ] Recorded fixtures + parser unit tests; crawl diff report (added/removed/changed)
+- [x] `Enclosure` zod schema shared by crawler and server: code, names (TR/EN), category,
+      variants (code, barcode, options), outer dimensions A×B×C, drawing dimensions (E1…P2),
+      materials, IP rating, operating temperature, all raw specs, documents, images, URLs
+- [x] Parse the flight payload (`variantMap`, `attributeLines`, `features`, `attachments`,
+      category tree, dimension tables) instead of scraping visible text
+- [x] Documents: drawing PDF, DXF, STEP, IP certificate, CNC machining template, print template
+- [x] Polite crawling: one request at a time, ~1.5 s delay with jitter, retries with backoff
+- [x] Recorded (logged-out, gzipped) fixtures + parser unit tests; added/removed/changed report
+- [x] No prices, stock or account data in the catalog (enforced by a test)
+- [ ] Inner dimensions: drawing letters mean different things per family, and inner length/depth
+      are often only on the PDF drawing (e.g. EC-1015: inner width = E2, inner length 128.5 mm and
+      inner depth 79 mm appear only on the drawing). Needs a reviewed per-family mapping file.
 
 ## Phase 2: MCP server
 

@@ -5,3 +5,4 @@ coverage/
 *.mcpb
 .env
 .DS_Store
+data/catalog.sample.json
