@@ -1,0 +1,18 @@
+name: Wrong or missing catalog data
+description: A product is missing, or its dimensions, IP rating or files are wrong
+labels: [data]
+body:
+  - type: input
+    id: code
+    attributes:
+      label: Product code
+      placeholder: "EC-3030"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong?
+      description: Link the product page on altinkaya.com if possible.
+    validations:
+      required: true

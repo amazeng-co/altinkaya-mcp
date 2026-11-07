@@ -24,14 +24,17 @@ Why this shape: Altınkaya has no public parametric API (server-rendered Next.js
 the site and makes every client fast and offline-capable.
 
 ## Phase 0: Repository foundations
-- [ ] Node 22+, TypeScript (strict, ESM), `@modelcontextprotocol/server` v2, zod, vitest
-- [ ] ESLint + Prettier, `.editorconfig`, `.nvmrc`
-- [ ] Community files: `LICENSE` (MIT), `README.md`, `README.tr.md`, `CONTRIBUTING.md`,
-      `SECURITY.md`, `CODE_OF_CONDUCT.md`, `CHANGELOG.md`, `AGENTS.md`
-- [ ] Issue/PR templates, Dependabot, CODEOWNERS
-- [ ] Changesets for versioning
+
+- [x] Node 22+, TypeScript (strict, ESM), `@modelcontextprotocol/server` v2, zod, vitest
+- [x] ESLint + Prettier, `.editorconfig`, `.nvmrc`
+- [x] Community files: `LICENSE` (MIT), `README.md`, `README.tr.md`, `CONTRIBUTING.md`,
+      `SECURITY.md`, `CODE_OF_CONDUCT.md`, `AGENTS.md` (`CHANGELOG.md` is created by the first release)
+- [x] Issue/PR templates, Dependabot
+- [ ] CODEOWNERS (needs maintainer GitHub handles)
+- [x] Changesets for versioning
 
 ## Phase 1: Crawler and catalog schema
+
 - [ ] `Enclosure` zod schema shared by crawler and server: code, name, family, category path,
       variants (code, barcode, attributes), outer dimensions A×B×C, raw drawing dimensions
       (B1…E4, P1, P2), material, color, IP rating, operating temperature, flame rating,
@@ -43,7 +46,9 @@ the site and makes every client fast and offline-capable.
 - [ ] Recorded fixtures + parser unit tests; crawl diff report (added/removed/changed)
 
 ## Phase 2: MCP server
+
 Tools (all `readOnlyHint: true`, `idempotentHint: true`, with `outputSchema` + `structuredContent`):
+
 - [ ] `search_enclosures`: keyword / code search
 - [ ] `filter_enclosures`: min inner/outer dimensions (PCB fit with clearance), IP rating,
       material, mounting (DIN rail, wall, rack, handheld, panel), category; sort + pagination
@@ -58,12 +63,14 @@ Tools (all `readOnlyHint: true`, `idempotentHint: true`, with `outputSchema` + `
 - [ ] Transports: stdio (default) and Streamable HTTP (`--http --port`, `createMcpHandler`)
 
 ## Phase 3: Quality
+
 - [ ] Unit tests (filters, fit math, schema, loader fallbacks)
 - [ ] E2E protocol tests with a real MCP client over stdio and HTTP
 - [ ] Tool annotation test (every tool read-only); MCP Inspector smoke check in CI
 - [ ] CI matrix: Linux / macOS / Windows × Node 22 / 24
 
 ## Phase 4: Distribution and one-click install
+
 - [ ] npm: `altinkaya-mcp` (`npx -y altinkaya-mcp`), provenance enabled
 - [ ] MCP Registry: `server.json` (`io.github.amazeng-co/altinkaya-mcp`), `mcpName`, OIDC publish workflow
 - [ ] Claude Desktop: `.mcpb` bundle attached to each GitHub release (double-click install)
@@ -73,11 +80,13 @@ Tools (all `readOnlyHint: true`, `idempotentHint: true`, with `outputSchema` + `
 - [ ] Hosted remote endpoint (Streamable HTTP) for zero-install clients; host to be decided
 
 ## Phase 5: Automation
+
 - [ ] `ci.yml`: lint, typecheck, test, build, pack check
 - [ ] `crawl.yml`: daily cron, validate, open/merge data PR when the catalog changes
 - [ ] `release.yml`: changesets → npm publish → GitHub release (+ `.mcpb`) → Docker → MCP Registry
 
 ## Known risks
+
 - Site structure changes break the crawler: schema validation + CI failure make it loud.
 - Drawing-letter dimensions (B1, D1, …) need a per-family mapping to become inner dimensions.
 - Prices and stock are login-gated / under `/api`: out of scope unless Altınkaya grants access.
