@@ -46,7 +46,7 @@
     "prepublishOnly": "npm run build",
     "crawl": "tsx scripts/crawl/index.ts",
     "build:mcpb": "bash scripts/build-mcpb.sh",
-    "version": "changeset version && node scripts/sync-version.mjs && prettier --write server.json mcpb/manifest.json CHANGELOG.md"
+    "version": "changeset version && node scripts/sync-version.mjs && prettier --write CHANGELOG.md"
   },
   "dependencies": {
     "@modelcontextprotocol/node": "^2.1.2",
