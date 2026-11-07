@@ -4,7 +4,8 @@ name: Release
 # merged, publishes to npm. A publish then attaches the Claude Desktop bundle to the GitHub
 # release, pushes the Docker image to GHCR and publishes server.json to the MCP Registry.
 #
-# Setup: configure npm trusted publishing for this workflow (or add an NPM_TOKEN secret).
+# npm publishes through trusted publishing (OIDC, configured for this workflow on npmjs.com);
+# no token is stored in the repository.
 
 on:
   push:
@@ -40,7 +41,6 @@ jobs:
           create-github-releases: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
 
   artifacts:
