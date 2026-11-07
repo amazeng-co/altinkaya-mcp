@@ -54,18 +54,20 @@ off the site, and shipping the result as a file makes every client fast and offl
 
 Tools (all `readOnlyHint: true`, `idempotentHint: true`, with `outputSchema` + `structuredContent`):
 
-- [ ] `search_enclosures`: keyword / code search
-- [ ] `filter_enclosures`: min inner/outer dimensions (PCB fit with clearance), IP rating,
-      material, mounting (DIN rail, wall, rack, handheld, panel), category; sort + pagination
-- [ ] `get_enclosure`: full details incl. variants and documents
-- [ ] `compare_enclosures`: 2–10 products side by side, differences highlighted
-- [ ] `list_categories`: category tree with counts
-- [ ] `get_cad_files`: document links; optional download into the cache dir
-- [ ] Resources: `altinkaya://enclosure/{code}`, `altinkaya://category/{slug}`
-- [ ] Prompts: `select_enclosure` (guided selection from PCB size + environment)
-- [ ] Catalog loader: remote → cache → bundled; `ALTINKAYA_MCP_OFFLINE`, `ALTINKAYA_MCP_CACHE_DIR`,
-      `ALTINKAYA_MCP_LANG`, `ALTINKAYA_MCP_CATALOG_URL`
-- [ ] Transports: stdio (default) and Streamable HTTP (`--http --port`, `createMcpHandler`)
+- [x] `search_enclosures`: code / Turkish / English / category keyword search (accent-insensitive)
+- [x] `filter_enclosures`: min/max outer size (any orientation), minimum IP rating (per digit),
+      material, category subtree, keyword; sorted smallest first, paginated
+- [x] `get_enclosure`: full record, found by family code, variant code or slug
+- [x] `compare_enclosures`: 2–10 products side by side, differing fields listed
+- [x] `list_categories`: category tree with enclosure counts
+- [x] `get_cad_files`: drawing, DXF, STEP, IP certificate, machining and print template links
+- [x] Resource template `altinkaya://enclosure/{code}` with code completion
+- [x] Prompt `select_enclosure` (guided selection from contents + environment)
+- [x] Catalog loader: remote (ETag) → cache → bundled; `ALTINKAYA_MCP_OFFLINE`,
+      `ALTINKAYA_MCP_CACHE_DIR`, `ALTINKAYA_MCP_CATALOG_URL`
+- [x] Transport: stdio
+- [ ] Transport: Streamable HTTP (`--http --port`, `createMcpHandler`)
+- [ ] Inner-dimension filter (`min_inner_mm`) once the per-family mapping exists
 
 ## Phase 3: Quality
 
