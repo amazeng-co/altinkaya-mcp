@@ -1,0 +1,93 @@
+name: Release
+
+# On every push to main, changesets either opens a "Version packages" PR or, once that PR is
+# merged, publishes to npm. A publish then attaches the Claude Desktop bundle to the GitHub
+# release, pushes the Docker image to GHCR and publishes server.json to the MCP Registry.
+#
+# Setup: configure npm trusted publishing for this workflow (or add an NPM_TOKEN secret).
+
+on:
+  push:
+    branches: [main]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - id: changesets
+        uses: changesets/action@v1
+        with:
+          version: npm run version
+          publish: npx changeset publish
+          commit: Version packages
+          title: Version packages
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+
+  artifacts:
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - id: meta
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Build and attach the Claude Desktop bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          npm run build:mcpb
+          tag=$(gh release list --limit 20 --json tagName --jq '.[].tagName' | grep -E "(^v|@)${{ steps.meta.outputs.version }}$" | head -1)
+          gh release upload "$tag" altinkaya-mcp.mcpb --clobber
+
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ghcr.io/amazeng-co/altinkaya-mcp:${{ steps.meta.outputs.version }}
+            ghcr.io/amazeng-co/altinkaya-mcp:latest
+
+      - name: Publish to the MCP Registry
+        run: |
+          os=$(uname -s | tr '[:upper:]' '[:lower:]')
+          arch=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_${os}_${arch}.tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish

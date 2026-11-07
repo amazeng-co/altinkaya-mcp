@@ -1,7 +1,7 @@
 {
   "name": "altinkaya-mcp",
   "version": "0.0.0",
-  "description": "MCP server for the Altınkaya electronic enclosure catalog: search, parametric filtering, comparison and CAD files",
+  "description": "MCP server for the Alt\u0131nkaya electronic enclosure catalog: search, parametric filtering, comparison and CAD files",
   "keywords": [
     "mcp",
     "model-context-protocol",
@@ -26,7 +26,9 @@
   },
   "files": [
     "dist",
-    "data"
+    "data",
+    "!data/catalog.sample.json",
+    "!data/.gitkeep"
   ],
   "engines": {
     "node": ">=22.12"
@@ -42,7 +44,9 @@
     "test:watch": "vitest",
     "changeset": "changeset",
     "prepublishOnly": "npm run build",
-    "crawl": "tsx scripts/crawl/index.ts"
+    "crawl": "tsx scripts/crawl/index.ts",
+    "build:mcpb": "bash scripts/build-mcpb.sh",
+    "version": "changeset version && node scripts/sync-version.mjs && prettier --write server.json mcpb/manifest.json CHANGELOG.md"
   },
   "dependencies": {
     "@modelcontextprotocol/node": "^2.1.2",

@@ -1,0 +1,54 @@
+{
+  "manifest_version": "0.3",
+  "name": "altinkaya-mcp",
+  "display_name": "Altınkaya Enclosures",
+  "version": "0.0.0",
+  "description": "Search, filter and compare Altınkaya electronic enclosures and get their CAD files.",
+  "long_description": "Gives Claude the Altınkaya electronic enclosure catalog: keyword search, parametric filtering by outer size, IP rating, material and category, side-by-side comparison, and links to drawings, DXF, STEP models, IP certificates and machining templates. Runs locally and read-only; no account or API key needed. Unofficial community project.",
+  "author": {
+    "name": "Amazeng",
+    "url": "https://github.com/amazeng-co"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/amazeng-co/altinkaya-mcp.git"
+  },
+  "homepage": "https://github.com/amazeng-co/altinkaya-mcp",
+  "support": "https://github.com/amazeng-co/altinkaya-mcp/issues",
+  "license": "MIT",
+  "keywords": ["enclosure", "electronics", "cad", "step", "altinkaya"],
+  "server": {
+    "type": "node",
+    "entry_point": "dist/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/index.js"]
+    }
+  },
+  "tools": [
+    { "name": "search_enclosures", "description": "Keyword search across the enclosure catalog" },
+    {
+      "name": "filter_enclosures",
+      "description": "Filter by outer size, IP rating, material and category"
+    },
+    {
+      "name": "get_enclosure",
+      "description": "Full details, variants and documents for one enclosure"
+    },
+    { "name": "compare_enclosures", "description": "Compare 2–10 enclosures side by side" },
+    { "name": "list_categories", "description": "Enclosure category tree with counts" },
+    { "name": "get_cad_files", "description": "Drawing, DXF, STEP and template download links" }
+  ],
+  "prompts": [
+    {
+      "name": "select_enclosure",
+      "description": "Guided enclosure selection",
+      "arguments": ["contents", "environment"],
+      "text": "Help me choose an Altınkaya enclosure for: ${arguments.contents}. Environment: ${arguments.environment}."
+    }
+  ],
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": { "node": ">=22.12.0" }
+  }
+}

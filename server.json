@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.amazeng-co/altinkaya-mcp",
+  "title": "Altınkaya Enclosures",
+  "description": "Search, filter and compare Altınkaya electronic enclosures and get their CAD files.",
+  "repository": {
+    "url": "https://github.com/amazeng-co/altinkaya-mcp",
+    "source": "github"
+  },
+  "version": "0.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "altinkaya-mcp",
+      "version": "0.0.0",
+      "transport": { "type": "stdio" }
+    },
+    {
+      "registryType": "oci",
+      "identifier": "ghcr.io/amazeng-co/altinkaya-mcp:0.0.0",
+      "transport": { "type": "stdio" }
+    }
+  ]
+}

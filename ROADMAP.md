@@ -73,24 +73,27 @@ Tools (all `readOnlyHint: true`, `idempotentHint: true`, with `outputSchema` + `
 
 - [x] Unit tests (filters, fit math, schema, loader fallbacks)
 - [x] E2E protocol tests with a real MCP client over stdio and HTTP
-- [ ] Tool annotation test (every tool read-only); MCP Inspector smoke check in CI
-- [ ] CI matrix: Linux / macOS / Windows × Node 22 / 24
+- [x] Tool annotation test (every tool read-only)
+- [ ] MCP Inspector smoke check in CI
+- [x] CI matrix: Linux / macOS / Windows × Node 22 / 24
 
 ## Phase 4: Distribution and one-click install
 
-- [ ] npm: `altinkaya-mcp` (`npx -y altinkaya-mcp`), provenance enabled
-- [ ] MCP Registry: `server.json` (`io.github.amazeng-co/altinkaya-mcp`), `mcpName`, OIDC publish workflow
-- [ ] Claude Desktop: `.mcpb` bundle attached to each GitHub release (double-click install)
-- [ ] Docker image on GHCR (stdio and HTTP)
-- [ ] README one-click buttons: VS Code, VS Code Insiders, Cursor, LM Studio, Goose;
-      copy-paste commands for Claude Code, Codex, Gemini CLI, Windsurf, Zed, Cline
+- [x] npm: `altinkaya-mcp` (`npx -y altinkaya-mcp`), provenance enabled
+- [x] MCP Registry: `server.json` (`io.github.amazeng-co/altinkaya-mcp`, npm + OCI), `mcpName`
+- [x] Claude Desktop: `.mcpb` bundle (`npm run build:mcpb`), attached to each release
+- [x] Docker image (stdio by default, `--http` for HTTP), multi-arch, on GHCR
+- [x] README one-click buttons: VS Code, VS Code Insiders, Cursor, LM Studio, Goose; commands for
+      Claude Code, Codex, Gemini CLI, VS Code CLI; config notes for Windsurf, Cline, Zed
 - [ ] Hosted remote endpoint (Streamable HTTP) for zero-install clients; host to be decided
 
 ## Phase 5: Automation
 
-- [ ] `ci.yml`: lint, typecheck, test, build, pack check
-- [ ] `crawl.yml`: daily cron, validate, open/merge data PR when the catalog changes
-- [ ] `release.yml`: changesets → npm publish → GitHub release (+ `.mcpb`) → Docker → MCP Registry
+- [x] `ci.yml`: lint, format, typecheck, test, build, pack check (Linux / macOS / Windows × Node 22 / 24)
+- [x] `crawl-reminder.yml`: monthly issue to run the local crawl
+- [x] `release.yml`: changesets → npm publish → GitHub release (+ `.mcpb`) → GHCR → MCP Registry
+- [x] Version sync across `package.json`, `server.json` and the `.mcpb` manifest (enforced by a test)
+- [ ] First release: npm trusted publishing (or `NPM_TOKEN`), GHCR package visibility, registry namespace check
 
 ## Known risks
 
