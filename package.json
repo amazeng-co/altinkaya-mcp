@@ -1,6 +1,6 @@
 {
   "name": "altinkaya-mcp",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "MCP server for the Alt\u0131nkaya electronic enclosure catalog: search, parametric filtering, comparison and CAD files",
   "keywords": [
     "mcp",
