@@ -66,13 +66,13 @@ Tools (all `readOnlyHint: true`, `idempotentHint: true`, with `outputSchema` + `
 - [x] Catalog loader: remote (ETag) → cache → bundled; `ALTINKAYA_MCP_OFFLINE`,
       `ALTINKAYA_MCP_CACHE_DIR`, `ALTINKAYA_MCP_CATALOG_URL`
 - [x] Transport: stdio
-- [ ] Transport: Streamable HTTP (`--http --port`, `createMcpHandler`)
+- [x] Transport: Streamable HTTP (`--http`, `/mcp`, `/healthz`, Host-header validation)
 - [ ] Inner-dimension filter (`min_inner_mm`) once the per-family mapping exists
 
 ## Phase 3: Quality
 
-- [ ] Unit tests (filters, fit math, schema, loader fallbacks)
-- [ ] E2E protocol tests with a real MCP client over stdio and HTTP
+- [x] Unit tests (filters, fit math, schema, loader fallbacks)
+- [x] E2E protocol tests with a real MCP client over stdio and HTTP
 - [ ] Tool annotation test (every tool read-only); MCP Inspector smoke check in CI
 - [ ] CI matrix: Linux / macOS / Windows × Node 22 / 24
 
