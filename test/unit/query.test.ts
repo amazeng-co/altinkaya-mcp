@@ -43,6 +43,26 @@ describe("CatalogIndex", () => {
     expect(idx.find("nope")).toBeUndefined();
   });
 
+  it("returns candidates when a model code is shared by several products", async () => {
+    const catalog = await testCatalog();
+    const clone = { ...catalog.enclosures[0]!, id: 1, slug: "ec-1015-yan-kapak-1", variants: [] };
+    const shared = new CatalogIndex({ ...catalog, enclosures: [...catalog.enclosures, clone] });
+    const r = shared.resolve("EC-1015");
+    expect(r.match).toBeUndefined();
+    expect(r.candidates?.map((e) => e.slug).sort()).toEqual([
+      "ec-1015-ip67-plastik-pano-16355",
+      "ec-1015-yan-kapak-1",
+    ]);
+    expect(shared.resolve("ec-1015-yan-kapak-1").match?.id).toBe(1);
+  });
+
+  it("summarizes variants and caps the list", () => {
+    const d = idx.detail(idx.find("EC-1015")!, {}, 1);
+    expect(d.variants).toHaveLength(1);
+    expect(d.variantsTruncated).toBe(d.variantCount > 1);
+    expect(Object.keys(d.optionValues).length).toBeGreaterThan(0);
+  });
+
   it("searches codes, Turkish and English names and categories", () => {
     expect(idx.search("EC-1015", 5)[0]?.code).toBe("EC-1015");
     expect(idx.search("hinged", 5).map((e) => e.code)).toEqual(["EC-1015"]);

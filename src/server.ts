@@ -23,12 +23,12 @@ export function createServer(index: () => Promise<CatalogIndex>): McpServer {
 
   server.registerResource(
     "enclosure",
-    new ResourceTemplate("altinkaya://enclosure/{code}", {
+    new ResourceTemplate("altinkaya://enclosure/{slug}", {
       list: async () => {
         const idx = await index();
         return {
           resources: idx.catalog.enclosures.map((e) => ({
-            uri: `altinkaya://enclosure/${e.code}`,
+            uri: `altinkaya://enclosure/${e.slug}`,
             name: e.code,
             title: e.name.en ?? e.name.tr,
             mimeType: "application/json",
@@ -36,12 +36,12 @@ export function createServer(index: () => Promise<CatalogIndex>): McpServer {
         };
       },
       complete: {
-        code: async (value) => {
+        slug: async (value) => {
           const idx = await index();
-          const prefix = value.toUpperCase();
+          const prefix = value.toLowerCase();
           return idx.catalog.enclosures
-            .map((e) => e.code)
-            .filter((c) => c.toUpperCase().startsWith(prefix))
+            .map((e) => e.slug)
+            .filter((s) => s.startsWith(prefix))
             .slice(0, 50);
         },
       },
@@ -51,13 +51,17 @@ export function createServer(index: () => Promise<CatalogIndex>): McpServer {
       description: "Full catalog record for one enclosure",
       mimeType: "application/json",
     },
-    async (uri, { code }) => {
+    async (uri, { slug }) => {
       const idx = await index();
-      const e = idx.find(String(code));
-      if (!e) throw new Error(`Unknown enclosure: ${String(code)}`);
+      const e = idx.find(String(slug));
+      if (!e) throw new Error(`Unknown enclosure: ${String(slug)}`);
       return {
         contents: [
-          { uri: uri.href, mimeType: "application/json", text: JSON.stringify(e, null, 2) },
+          {
+            uri: uri.href,
+            mimeType: "application/json",
+            text: JSON.stringify(idx.detail(e), null, 2),
+          },
         ],
       };
     },

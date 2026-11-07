@@ -1,10 +1,18 @@
 import { z } from "zod";
-import type { Catalog, Category, Enclosure, Range } from "./schema.js";
+import {
+  EnclosureSchema,
+  VariantSchema,
+  type Catalog,
+  type Category,
+  type Enclosure,
+  type Range,
+} from "./schema.js";
 
 // ---- Views returned by tools ----
 
 export const SummarySchema = z.object({
   code: z.string(),
+  slug: z.string().describe("Unique id; use it when a code matches several products"),
   name: z.string(),
   nameEn: z.string().nullable(),
   category: z.string(),
@@ -15,15 +23,30 @@ export const SummarySchema = z.object({
 });
 export type Summary = z.infer<typeof SummarySchema>;
 
+/** Variants can run into the thousands; tools show the option matrix plus a bounded list. */
+export const DetailSchema = EnclosureSchema.omit({ variants: true }).extend({
+  variantCount: z.number(),
+  optionValues: z
+    .record(z.string(), z.array(z.string()))
+    .describe("Every option and its possible values, e.g. { Renk: [Siyah, Açık Gri] }"),
+  variants: z.array(VariantSchema).describe("Matching variants, at most `limit`"),
+  variantsTruncated: z.boolean(),
+});
+export type Detail = z.infer<typeof DetailSchema>;
+
+export type Resolution =
+  { match: Enclosure; candidates?: never } | { match?: never; candidates: Enclosure[] };
+
 export class CatalogIndex {
-  readonly byCode = new Map<string, Enclosure>();
+  readonly byCode = new Map<string, Enclosure[]>();
   readonly categories = new Map<number, Category>();
   private readonly haystack = new Map<Enclosure, string>();
 
   constructor(readonly catalog: Catalog) {
     for (const c of catalog.categories) this.categories.set(c.id, c);
     for (const e of catalog.enclosures) {
-      this.byCode.set(normalize(e.code), e);
+      const key = normalize(e.code);
+      this.byCode.set(key, [...(this.byCode.get(key) ?? []), e]);
       this.haystack.set(
         e,
         normalize(
@@ -54,15 +77,50 @@ export class CatalogIndex {
     return path;
   }
 
-  /** Looks up by family code (EC-1015), variant code (EC-1015-7-...) or slug. */
-  find(ref: string): Enclosure | undefined {
+  /**
+   * Looks up by slug, variant order code or model code. A model code can be shared by several
+   * products of one family (e.g. a profile and its end caps); those come back as candidates.
+   */
+  resolve(ref: string): Resolution {
     const key = normalize(ref);
-    return (
-      this.byCode.get(key) ??
-      this.catalog.enclosures.find(
-        (e) => e.slug === ref || e.variants.some((v) => normalize(v.code) === key),
-      )
+    const exact = this.catalog.enclosures.find(
+      (e) => e.slug === ref.trim() || e.variants.some((v) => normalize(v.code) === key),
     );
+    if (exact) return { match: exact };
+    const byCode = this.byCode.get(key) ?? [];
+    return byCode.length === 1 ? { match: byCode[0]! } : { candidates: byCode };
+  }
+
+  /** The single product for `ref`, or undefined when unknown or ambiguous. */
+  find(ref: string): Enclosure | undefined {
+    return this.resolve(ref).match;
+  }
+
+  /** Full record with variants reduced to the option matrix and a bounded, filtered list. */
+  detail(e: Enclosure, options: Record<string, string> = {}, limit = 50): Detail {
+    const { variants, ...rest } = e;
+    const optionValues: Record<string, string[]> = {};
+    for (const v of variants) {
+      for (const [k, val] of Object.entries(v.options)) {
+        const list = (optionValues[k] ??= []);
+        if (!list.includes(val)) list.push(val);
+      }
+    }
+    const wanted = Object.entries(options).map(([k, v]) => [normalize(k), normalize(v)] as const);
+    const matching = variants.filter((v) =>
+      wanted.every(([k, want]) =>
+        Object.entries(v.options).some(
+          ([ok, ov]) => normalize(ok) === k && normalize(ov).includes(want),
+        ),
+      ),
+    );
+    return {
+      ...rest,
+      variantCount: variants.length,
+      optionValues,
+      variants: matching.slice(0, limit),
+      variantsTruncated: matching.length > limit,
+    };
   }
 
   search(query: string, limit: number): Enclosure[] {
@@ -116,6 +174,7 @@ export class CatalogIndex {
   summary(e: Enclosure): Summary {
     return {
       code: e.code,
+      slug: e.slug,
       name: e.name.tr,
       nameEn: e.name.en,
       category: this.categoryPath(e.categoryId).join(" › "),

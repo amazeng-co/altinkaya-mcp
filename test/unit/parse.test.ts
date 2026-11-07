@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { EnclosureSchema } from "../../src/catalog/schema.js";
 import {
+  cleanEnglishName,
+  familyCode,
   linkedCategorySlugs,
   parseCategoryProducts,
   parseCategoryTree,
@@ -18,6 +20,26 @@ describe("value parsing", () => {
     expect(parseRange("111,5")).toEqual({ min: 111.5, max: 111.5 });
     expect(parseRange(undefined)).toBeNull();
     expect(parseRange("n/a")).toBeNull();
+  });
+
+  it("derives model codes, falling back to the variant code prefix", () => {
+    expect(familyCode("EC-1015 IP67 Plastik Pano")).toBe("EC-1015");
+    expect(
+      familyCode('19" 2U Rack Tipi Alüminyum Kutu', ["RM-120-140-0-N-A", "RM-120-140-A-N-H"]),
+    ).toBe("RM-120-140");
+    expect(familyCode("PT 210-01 Panel Tipi Kutu", ["PT-210-01-0-G-0", "PT-210-01-0-S-0"])).toBe(
+      "PT-210-01",
+    );
+    expect(familyCode("Rack Kabin Kablo Düzenleme Braketi – 1U", ["RS-115-1U"])).toBe("RS-115-1U");
+  });
+
+  it("drops category suffixes from English names", () => {
+    expect(cleanEnglishName("PT-208-01 Panel Enclosure - DIN Panel Enclosures")).toBe(
+      "PT-208-01 Panel Enclosure",
+    );
+    expect(cleanEnglishName("RT-043 DIN Rail Modular PCB Board Holder - 43 mm")).toBe(
+      "RT-043 DIN Rail Modular PCB Board Holder - 43 mm",
+    );
   });
 
   it("parses operating temperature", () => {

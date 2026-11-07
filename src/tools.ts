@@ -1,7 +1,13 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod";
-import { CatalogIndex, SummarySchema, matches, type FilterCriteria } from "./catalog/query.js";
-import { DocumentSchema, EnclosureSchema, type Enclosure } from "./catalog/schema.js";
+import {
+  CatalogIndex,
+  DetailSchema,
+  SummarySchema,
+  matches,
+  type FilterCriteria,
+} from "./catalog/query.js";
+import { DocumentSchema, type Enclosure } from "./catalog/schema.js";
 
 const READ_ONLY = { readOnlyHint: true, idempotentHint: true, openWorldHint: false } as const;
 
@@ -20,14 +26,24 @@ function result<T extends object>(data: T) {
   };
 }
 
-function notFound(ref: string) {
-  return {
-    content: [
-      { type: "text" as const, text: `No enclosure found for "${ref}". Try search_enclosures.` },
-    ],
-    isError: true,
-  };
+function error(text: string) {
+  return { content: [{ type: "text" as const, text }], isError: true };
 }
+
+/** Resolves `ref` to one product, or explains why not (unknown, or shared by several). */
+function lookup(idx: CatalogIndex, ref: string): Enclosure | ReturnType<typeof error> {
+  const { match, candidates } = idx.resolve(ref);
+  if (match) return match;
+  if (candidates.length === 0)
+    return error(`No enclosure found for "${ref}". Try search_enclosures.`);
+  const list = candidates.map((e) => `- ${e.slug}: ${e.name.en ?? e.name.tr}`).join("\n");
+  return error(
+    `"${ref}" matches ${candidates.length} products. Call again with one of these slugs:\n${list}`,
+  );
+}
+
+const isError = (x: unknown): x is ReturnType<typeof error> =>
+  typeof x === "object" && x !== null && "isError" in x;
 
 /** Registers every tool. `index` resolves once the catalog has loaded. */
 export function registerTools(server: McpServer, index: () => Promise<CatalogIndex>): void {
@@ -130,27 +146,30 @@ export function registerTools(server: McpServer, index: () => Promise<CatalogInd
     {
       title: "Get enclosure details",
       description:
-        "Full details for one enclosure: all specifications, drawing dimensions, variants " +
-        "(colors, lids, options with order codes and barcodes), documents and images.",
+        "Full details for one enclosure: all specifications, drawing dimensions, documents, " +
+        "images and its variants (colors, lids, lengths… with order codes and barcodes). " +
+        "optionValues lists every option; pass `options` to get the order code of a specific " +
+        "configuration.",
       inputSchema: z.object({
         code: z
           .string()
-          .describe("Family code (EC-1015), variant code (EC-1015-7-0-0-G-0) or slug"),
+          .describe("Model code (EC-1015), variant order code (EC-1015-7-0-0-G-0) or slug"),
+        options: z
+          .record(z.string(), z.string())
+          .optional()
+          .describe('Only variants with these options, e.g. { "Renk": "Siyah" }'),
+        variant_limit: z.number().int().min(1).max(500).default(50),
       }),
-      outputSchema: z.object({
-        category: z.string(),
-        enclosure: EnclosureSchema,
-        note: z.string(),
-      }),
+      outputSchema: z.object({ category: z.string(), enclosure: DetailSchema, note: z.string() }),
       annotations: READ_ONLY,
     },
-    async ({ code }) => {
+    async ({ code, options, variant_limit }) => {
       const idx = await index();
-      const e = idx.find(code);
-      if (!e) return notFound(code);
+      const e = lookup(idx, code);
+      if (isError(e)) return e;
       return result({
         category: idx.categoryPath(e.categoryId).join(" › "),
-        enclosure: e,
+        enclosure: idx.detail(e, options, variant_limit),
         note: NOTE,
       });
     },
@@ -165,7 +184,7 @@ export function registerTools(server: McpServer, index: () => Promise<CatalogInd
       outputSchema: z.object({
         enclosures: z.array(SummarySchema.extend({ drawing: z.record(z.string(), z.number()) })),
         differences: z.array(z.string()),
-        notFound: z.array(z.string()),
+        notFound: z.array(z.string()).describe("Codes that were unknown or ambiguous, with hints"),
       }),
       annotations: READ_ONLY,
     },
@@ -174,9 +193,9 @@ export function registerTools(server: McpServer, index: () => Promise<CatalogInd
       const found: Enclosure[] = [];
       const missing: string[] = [];
       for (const c of codes) {
-        const e = idx.find(c);
-        if (e) found.push(e);
-        else missing.push(c);
+        const e = lookup(idx, c);
+        if (isError(e)) missing.push(e.content[0]!.text);
+        else found.push(e);
       }
       const rows = found.map((e) => ({ ...idx.summary(e), drawing: e.drawing }));
       const fields = ["category", "outerMm", "materials", "ipRating", "drawing"] as const;
@@ -236,8 +255,8 @@ export function registerTools(server: McpServer, index: () => Promise<CatalogInd
     },
     async ({ code, types }) => {
       const idx = await index();
-      const e = idx.find(code);
-      if (!e) return notFound(code);
+      const e = lookup(idx, code);
+      if (isError(e)) return e;
       const documents = types ? e.documents.filter((d) => types.includes(d.type)) : e.documents;
       return result({ code: e.code, productUrl: e.url.en, documents });
     },

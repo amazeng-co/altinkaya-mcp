@@ -107,20 +107,26 @@ export function parseProduct(html: string, enHtml?: string): Enclosure {
     if (value !== undefined) drawing[f.name] = value;
   }
 
+  const variants = parseVariants(p);
   return {
     id: p.productTemplateId,
-    code: familyCode(p.productName),
+    code: familyCode(
+      p.productName,
+      variants.map((v) => v.code),
+    ),
     slug,
     name: { tr: p.productName, en: enHtml ? englishName(enHtml, html, p.productName) : null },
     url: { tr: `${ORIGIN}/tr/products/${slug}`, en: `${ORIGIN}/en/products/${slug}` },
     categoryId: breadcrumbCategoryId(html, flight),
     outer: a && b && c ? { a, b, c } : null,
     drawing,
-    materials: feature("Malzeme"),
+    materials: feature("Malzeme")
+      .map((m) => m.trim())
+      .filter(Boolean),
     ipRating: feature("IP Derecesi")[0] ?? null,
     operatingTemperature: parseTemperature(feature("Çalışma Sıcaklığı")[0]),
     specs,
-    variants: parseVariants(p),
+    variants,
     documents: attachments.map(toDocument),
     images: p.images.map((i) => absolute(i.url)),
   };
@@ -183,8 +189,20 @@ function breadcrumbCategoryId(html: string, flight: string): number {
 
 // ---- Value parsing ----
 
-export function familyCode(productName: string): string {
-  return productName.trim().split(/\s+/)[0]!;
+/**
+ * The model code: the first word of the name ("EC-1015 IP67 …"), "PT 210-01" joined into
+ * "PT-210-01", or, for names without a code ('19" 2U Rack …'), the common prefix of the
+ * variant order codes.
+ */
+export function familyCode(productName: string, variantCodes: string[] = []): string {
+  const [first = "", second = ""] = productName.trim().split(/\s+/);
+  if (/^[A-Za-z]+-?\d/.test(first) || variantCodes.length === 0) return first;
+  if (/^[A-Za-z]+$/.test(first) && /^\d/.test(second)) return `${first}-${second}`; // "PT 210-01"
+  let prefix = variantCodes[0]!;
+  for (const c of variantCodes) while (!c.startsWith(prefix)) prefix = prefix.slice(0, -1);
+  // With a single variant the "prefix" is the whole order code; cut it at its option suffix.
+  if (variantCodes.length === 1) prefix = prefix.split("-").slice(0, 3).join("-");
+  return prefix.replace(/-+$/, "") || first;
 }
 
 export function parseNumber(raw: string | undefined): number | undefined {
@@ -228,12 +246,18 @@ function englishName(enHtml: string, trHtml: string, trName: string): string | n
   const en = titleParts(enHtml);
   if (!en) return null;
   const extra = Math.max(0, (titleParts(trHtml)?.length ?? 0) - trName.split(" - ").length);
-  return (
-    en
-      .slice(0, Math.max(1, en.length - extra))
-      .join(" - ")
-      .trim() || null
-  );
+  return cleanEnglishName(en.slice(0, Math.max(1, en.length - extra)).join(" - "));
+}
+
+/**
+ * English titles sometimes keep a category suffix the Turkish title lacks
+ * ("PT-208-01 Panel Enclosure - DIN Panel Enclosures"). Drop a trailing part without digits
+ * that ends in a plural, keeping real name parts such as "- 43 mm".
+ */
+export function cleanEnglishName(name: string): string | null {
+  const parts = name.split(" - ");
+  if (parts.length > 1 && /^[^\d]*s$/.test(parts.at(-1)!.trim())) parts.pop();
+  return parts.join(" - ").trim() || null;
 }
 
 function decodeEntities(s: string): string {

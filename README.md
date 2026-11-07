@@ -49,7 +49,7 @@ Tek gereksinim [Node.js](https://nodejs.org) 22.12 veya üstü. Üyelik veya API
 | `list_categories`    | Kutu sayılarıyla kategori ağacı                                                            |
 | `get_cad_files`      | PDF çizim, DXF, STEP, IP sertifikası, CNC işleme ve UV baskı şablonu linkleri              |
 
-Ayrıca `altinkaya://enclosure/{code}` resource şablonu ve adım adım kutu seçimi için
+Ayrıca `altinkaya://enclosure/{slug}` resource şablonu ve adım adım kutu seçimi için
 `select_enclosure` istemi (prompt) gelir.
 
 > [!IMPORTANT]

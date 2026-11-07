@@ -62,10 +62,19 @@ describe("MCP server", () => {
   });
 
   it("returns full details, comparisons and CAD files", async () => {
-    const d = await call<{ enclosure: { code: string; variants: unknown[] } }>("get_enclosure", {
+    const d = await call<{ enclosure: { code: string; variantCount: number } }>("get_enclosure", {
       code: "ec-1015",
     });
     expect(d.structuredContent.enclosure.code).toBe("EC-1015");
+    expect(d.structuredContent.enclosure.variantCount).toBeGreaterThan(0);
+
+    const black = await call<{
+      enclosure: { optionValues: Record<string, string[]>; variants: { options: object }[] };
+    }>("get_enclosure", { code: "RT-014", options: { renk: "siyah" } });
+    expect(black.structuredContent.enclosure.optionValues.Renk).toEqual(["Açık Gri", "Siyah"]);
+    expect(black.structuredContent.enclosure.variants).toEqual([
+      expect.objectContaining({ options: { Renk: "Siyah" } }),
+    ]);
 
     const c = await call<{ differences: string[] }>("compare_enclosures", {
       codes: ["EC-1015", "RT-014"],
@@ -88,9 +97,14 @@ describe("MCP server", () => {
 
   it("serves enclosure resources and the selection prompt", async () => {
     const { resources } = await client.listResources();
-    expect(resources.map((r) => r.uri)).toContain("altinkaya://enclosure/EC-1015");
-    const res = await client.readResource({ uri: "altinkaya://enclosure/RT-014" });
-    expect(JSON.parse((res.contents[0] as { text: string }).text).code).toBe("RT-014");
+    expect(resources.map((r) => r.uri)).toContain(
+      "altinkaya://enclosure/ec-1015-ip67-plastik-pano-16355",
+    );
+    const res = await client.readResource({
+      uri: "altinkaya://enclosure/rt-014-ray-tipi-kutu-6966",
+    });
+    const body = JSON.parse((res.contents[0] as { text: string }).text);
+    expect(body).toMatchObject({ code: "RT-014", variantCount: 2 });
 
     const prompt = await client.getPrompt({
       name: "select_enclosure",

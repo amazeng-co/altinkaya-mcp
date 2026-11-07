@@ -48,7 +48,7 @@ All you need is [Node.js](https://nodejs.org) 22.12 or newer. No account, no API
 | `list_categories`    | The category tree with enclosure counts                                                           |
 | `get_cad_files`      | Links to the PDF drawing, DXF, STEP model, IP certificate, CNC and UV print templates             |
 
-Also included: the resource template `altinkaya://enclosure/{code}` and the prompt
+Also included: the resource template `altinkaya://enclosure/{slug}` and the prompt
 `select_enclosure` for guided selection.
 
 > [!IMPORTANT]
