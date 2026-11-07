@@ -2,7 +2,7 @@
   "manifest_version": "0.3",
   "name": "altinkaya-mcp",
   "display_name": "Altınkaya Enclosures",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Search, filter and compare Altınkaya electronic enclosures and get their CAD files.",
   "long_description": "Gives Claude the Altınkaya electronic enclosure catalog: keyword search, parametric filtering by outer size, IP rating, material and category, side-by-side comparison, and links to drawings, DXF, STEP models, IP certificates and machining templates. Runs locally and read-only; no account or API key needed. Unofficial community project.",
   "author": {
