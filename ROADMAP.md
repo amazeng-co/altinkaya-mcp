@@ -29,7 +29,7 @@ off the site, and shipping the result as a file makes every client fast and offl
 
 - [x] Node 22+, TypeScript (strict, ESM), `@modelcontextprotocol/server` v2, zod, vitest
 - [x] ESLint + Prettier, `.editorconfig`, `.nvmrc`
-- [x] Community files: `LICENSE` (MIT), `README.md`, `README.tr.md`, `CONTRIBUTING.md`,
+- [x] Community files: `LICENSE` (MIT), `README.md` (Turkish), `README.en.md`, `CONTRIBUTING.md`,
       `SECURITY.md`, `CODE_OF_CONDUCT.md`, `AGENTS.md` (`CHANGELOG.md` is created by the first release)
 - [x] Issue/PR templates, Dependabot
 - [ ] CODEOWNERS (needs maintainer GitHub handles)

@@ -2,62 +2,63 @@
 
 # Altınkaya MCP
 
-**Give your AI assistant the full [Altınkaya](https://www.altinkaya.com) electronic enclosure catalog.**
+**Yapay zekâ asistanınıza [Altınkaya](https://www.altinkaya.com) elektronik kutu kataloğunun tamamını bağlayın.**
 
-Search ~500 enclosure families, filter by size, IP rating and material, compare models and pull
-drawings and STEP files, from Claude, Cursor, VS Code and any other MCP client.
+~500 kutu ailesinde arama yapın, ölçü, IP sınıfı ve malzemeye göre filtreleyin, modelleri
+karşılaştırın; teknik çizim ve STEP dosyalarını Claude, Cursor, VS Code veya herhangi bir MCP
+istemcisinden alın.
 
 [![npm](https://img.shields.io/npm/v/altinkaya-mcp?color=cb3837&label=npm)](https://www.npmjs.com/package/altinkaya-mcp)
 [![CI](https://github.com/amazeng-co/altinkaya-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/amazeng-co/altinkaya-mcp/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-blue.svg)](LICENSE)
 
-[Türkçe](README.tr.md)
+[English](README.en.md)
 
 </div>
 
-## Install in one click
+## Tek tıkla kurulum
 
-[<img src="https://img.shields.io/badge/VS_Code-Install-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white" alt="Install in VS Code">](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522altinkaya%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522altinkaya-mcp%2522%255D%257D)
-[<img src="https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white" alt="Install in VS Code Insiders">](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522altinkaya%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522altinkaya-mcp%2522%255D%257D)
-[<img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Install in Cursor" height="20">](https://cursor.com/en/install-mcp?name=altinkaya&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImFsdGlua2F5YS1tY3AiXX0%3D)
-[<img src="https://files.lmstudio.ai/deeplink/mcp-install-light.svg" alt="Add to LM Studio" height="20">](https://lmstudio.ai/install-mcp?name=altinkaya&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImFsdGlua2F5YS1tY3AiXX0%3D)
-[<img src="https://block.github.io/goose/img/extension-install-dark.svg" alt="Install in Goose" height="20">](https://block.github.io/goose/extension?cmd=npx&arg=-y&arg=altinkaya-mcp&id=altinkaya&name=Alt%C4%B1nkaya&description=Alt%C4%B1nkaya%20enclosure%20catalog%3A%20search%2C%20filter%2C%20compare%20and%20CAD%20files)
+[<img src="https://img.shields.io/badge/VS_Code-Kur-0098FF?style=flat-square&logo=visualstudiocode&logoColor=white" alt="VS Code'a kur">](https://insiders.vscode.dev/redirect?url=vscode%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522altinkaya%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522altinkaya-mcp%2522%255D%257D)
+[<img src="https://img.shields.io/badge/VS_Code_Insiders-Kur-24bfa5?style=flat-square&logo=visualstudiocode&logoColor=white" alt="VS Code Insiders'a kur">](https://insiders.vscode.dev/redirect?url=vscode-insiders%3Amcp%2Finstall%3F%257B%2522name%2522%253A%2522altinkaya%2522%252C%2522command%2522%253A%2522npx%2522%252C%2522args%2522%253A%255B%2522-y%2522%252C%2522altinkaya-mcp%2522%255D%257D)
+[<img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Cursor'a kur" height="20">](https://cursor.com/en/install-mcp?name=altinkaya&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImFsdGlua2F5YS1tY3AiXX0%3D)
+[<img src="https://files.lmstudio.ai/deeplink/mcp-install-light.svg" alt="LM Studio'ya ekle" height="20">](https://lmstudio.ai/install-mcp?name=altinkaya&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsImFsdGlua2F5YS1tY3AiXX0%3D)
+[<img src="https://block.github.io/goose/img/extension-install-dark.svg" alt="Goose'a kur" height="20">](https://block.github.io/goose/extension?cmd=npx&arg=-y&arg=altinkaya-mcp&id=altinkaya&name=Alt%C4%B1nkaya&description=Alt%C4%B1nkaya%20enclosure%20catalog%3A%20search%2C%20filter%2C%20compare%20and%20CAD%20files)
 
-**Claude Desktop:** download `altinkaya-mcp.mcpb` from the
-[latest release](https://github.com/amazeng-co/altinkaya-mcp/releases/latest) and double-click it.
+**Claude Desktop:** [son sürümden](https://github.com/amazeng-co/altinkaya-mcp/releases/latest)
+`altinkaya-mcp.mcpb` dosyasını indirip çift tıklayın.
 
-All you need is [Node.js](https://nodejs.org) 22.12 or newer. No account, no API key.
+Tek gereksinim [Node.js](https://nodejs.org) 22.12 veya üstü. Üyelik veya API anahtarı gerekmez.
 
-## Try it
+## Örnek sorular
 
-> _I have an 80 × 50 × 20 mm PCB for an outdoor sensor. Which Altınkaya enclosures fit, and which
-> is the smallest IP67 one?_
+> _Dış ortamda çalışacak bir sensör için 80 × 50 × 20 mm PCB'm var. Hangi Altınkaya kutuları
+> uyar, en küçük IP67 olan hangisi?_
 
-> _Compare EC-1015 and EC-1515 and give me the STEP file of the better one._
+> _EC-1015 ile EC-1515'i karşılaştır, uygun olanın STEP dosyasını ver._
 
-> _Show me DIN rail enclosures that are at most 4 modules wide._
+> _En fazla 4 modül genişliğinde DIN ray kutularını göster._
 
-## What it can do
+## Araçlar
 
-| Tool                 | Purpose                                                                                           |
-| -------------------- | ------------------------------------------------------------------------------------------------- |
-| `search_enclosures`  | Keyword search: codes (`EC-1015`), Turkish or English names, categories, materials                |
-| `filter_enclosures`  | Parametric search: min/max outer size in any orientation, minimum IP rating, material, category   |
-| `get_enclosure`      | Everything about one enclosure: specs, drawing dimensions, variants with order codes and barcodes |
-| `compare_enclosures` | 2–10 enclosures side by side, with the differing fields highlighted                               |
-| `list_categories`    | The category tree with enclosure counts                                                           |
-| `get_cad_files`      | Links to the PDF drawing, DXF, STEP model, IP certificate, CNC and UV print templates             |
+| Araç                 | Ne işe yarar?                                                                              |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| `search_enclosures`  | Kod (`EC-1015`), Türkçe/İngilizce ad, kategori ve malzemeye göre arama                     |
+| `filter_enclosures`  | Parametrik arama: en az/en fazla dış ölçü (yönden bağımsız), minimum IP, malzeme, kategori |
+| `get_enclosure`      | Tek kutunun tüm bilgileri: özellikler, çizim ölçüleri, sipariş kodu ve barkodlu varyantlar |
+| `compare_enclosures` | 2–10 kutuyu yan yana karşılaştırma, farklı alanları işaretleme                             |
+| `list_categories`    | Kutu sayılarıyla kategori ağacı                                                            |
+| `get_cad_files`      | PDF çizim, DXF, STEP, IP sertifikası, CNC işleme ve UV baskı şablonu linkleri              |
 
-Also included: the resource template `altinkaya://enclosure/{code}` and the prompt
-`select_enclosure` for guided selection.
+Ayrıca `altinkaya://enclosure/{code}` resource şablonu ve adım adım kutu seçimi için
+`select_enclosure` istemi (prompt) gelir.
 
 > [!IMPORTANT]
-> Listed dimensions are **outer** dimensions. Usable inner space is smaller; check the drawing
-> (`get_cad_files`) before committing to a PCB size.
+> Listelenen ölçüler **dış** ölçülerdir. Kullanılabilir iç hacim daha küçüktür; PCB ölçüsüne
+> karar vermeden önce teknik çizimi (`get_cad_files`) kontrol edin.
 
-## Manual setup
+## Elle kurulum
 
-The server runs with `npx -y altinkaya-mcp`. The same JSON works for most clients:
+Sunucu `npx -y altinkaya-mcp` ile çalışır. Çoğu istemci için aynı JSON yeterlidir:
 
 ```json
 {
@@ -77,10 +78,11 @@ claude mcp add altinkaya -- npx -y altinkaya-mcp
 </details>
 
 <details>
-<summary><b>Claude Desktop (manual)</b></summary>
+<summary><b>Claude Desktop (elle)</b></summary>
 
-Settings → Developer → Edit Config, add the JSON above to `claude_desktop_config.json`, then
-restart Claude Desktop.
+Ayarlar → Geliştirici → Yapılandırmayı düzenle; yukarıdaki JSON'u `claude_desktop_config.json`
+dosyasına ekleyin ve Claude Desktop'ı yeniden başlatın.
+
 </details>
 
 <details>
@@ -102,7 +104,7 @@ gemini mcp add altinkaya npx -y altinkaya-mcp
 </details>
 
 <details>
-<summary><b>VS Code (manual)</b></summary>
+<summary><b>VS Code (elle)</b></summary>
 
 ```bash
 code --add-mcp '{"name":"altinkaya","command":"npx","args":["-y","altinkaya-mcp"]}'
@@ -111,10 +113,12 @@ code --add-mcp '{"name":"altinkaya","command":"npx","args":["-y","altinkaya-mcp"
 </details>
 
 <details>
-<summary><b>Cursor, Windsurf, Cline, Zed and others</b></summary>
+<summary><b>Cursor, Windsurf, Cline, Zed ve diğerleri</b></summary>
 
-Add the JSON above to the client's MCP settings (`~/.cursor/mcp.json`,
-`~/.codeium/windsurf/mcp_config.json`, Cline's _MCP Servers → Configure_, or Zed's `context_servers` setting).
+Yukarıdaki JSON'u istemcinin MCP ayarlarına ekleyin (`~/.cursor/mcp.json`,
+`~/.codeium/windsurf/mcp_config.json`, Cline'da _MCP Servers → Configure_ veya Zed'in
+`context_servers` ayarı).
+
 </details>
 
 <details>
@@ -133,37 +137,39 @@ docker run -i --rm ghcr.io/amazeng-co/altinkaya-mcp
 npx -y altinkaya-mcp --http --port 3000      # http://127.0.0.1:3000/mcp
 ```
 
-For a public deployment, bind to `0.0.0.0` and list the public host names in
-`ALTINKAYA_MCP_ALLOWED_HOSTS` (requests for other hosts are rejected to prevent DNS rebinding).
+Herkese açık bir kurulumda `0.0.0.0` adresine bağlayın ve genel host adlarını
+`ALTINKAYA_MCP_ALLOWED_HOSTS` ile verin (DNS rebinding'e karşı diğer host'lara gelen istekler
+reddedilir).
+
 </details>
 
-## Configuration
+## Ayarlar
 
-| Variable                      | Default             | Purpose                                                 |
-| ----------------------------- | ------------------- | ------------------------------------------------------- |
-| `ALTINKAYA_MCP_OFFLINE`       | unset               | `1` = never download; use the cached or bundled catalog |
-| `ALTINKAYA_MCP_CACHE_DIR`     | OS cache dir        | Where the downloaded catalog is cached                  |
-| `ALTINKAYA_MCP_CATALOG_URL`   | this repo on GitHub | Catalog file to download                                |
-| `ALTINKAYA_MCP_ALLOWED_HOSTS` | localhost           | Accepted host names in `--http` mode                    |
+| Değişken                      | Varsayılan                          | Açıklama                                                                 |
+| ----------------------------- | ----------------------------------- | ------------------------------------------------------------------------ |
+| `ALTINKAYA_MCP_OFFLINE`       | yok                                 | `1` = hiç indirme yapma; önbellekteki veya paketle gelen kataloğu kullan |
+| `ALTINKAYA_MCP_CACHE_DIR`     | işletim sisteminin önbellek klasörü | İndirilen kataloğun saklandığı yer                                       |
+| `ALTINKAYA_MCP_CATALOG_URL`   | bu reponun GitHub'daki dosyası      | İndirilecek katalog dosyası                                              |
+| `ALTINKAYA_MCP_ALLOWED_HOSTS` | localhost                           | `--http` modunda kabul edilen host adları                                |
 
-## How it works
+## Nasıl çalışır?
 
-Altınkaya has no public API, so the catalog is crawled about once a month from altinkaya.com
-(see [CONTRIBUTING](CONTRIBUTING.md#catalog-data)) into [`data/catalog.json`](data/catalog.json).
-On start, the server fetches the latest file from GitHub (a conditional request; nothing is
-downloaded if it has not changed), caches it, and falls back to the cached or bundled copy when
-offline. All searching happens in memory. Prices and stock are not included.
+Altınkaya'nın herkese açık bir API'si olmadığı için katalog yaklaşık ayda bir altinkaya.com'dan
+taranır ([CONTRIBUTING](CONTRIBUTING.md#catalog-data)) ve [`data/catalog.json`](data/catalog.json)
+dosyasına yazılır. Sunucu açılışta güncel dosyayı GitHub'dan ister (değişmediyse hiçbir şey
+indirilmez), önbelleğe yazar; internet yoksa önbellekteki veya paketle gelen kopyayı kullanır.
+Tüm arama bellekte yapılır. Fiyat ve stok bilgisi içermez.
 
-## Development
+## Geliştirme
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and the [roadmap](ROADMAP.md).
+[CONTRIBUTING.md](CONTRIBUTING.md) ve [yol haritası](ROADMAP.md) (İngilizce).
 
-## Disclaimer
+## Sorumluluk reddi
 
-This is an unofficial community project and is not affiliated with or endorsed by Altınkaya
-Elektronik Cihaz Kutuları San. Tic. A.Ş. Product data belongs to Altınkaya; always verify
-dimensions against the official drawings before manufacturing.
+Bu resmi olmayan bir topluluk projesidir; Altınkaya Elektronik Cihaz Kutuları San. Tic. A.Ş.
+ile bağlantılı değildir. Ürün verileri Altınkaya'ya aittir; üretimden önce ölçüleri her zaman
+resmi teknik çizimlerden doğrulayın.
 
-## License
+## Lisans
 
 [MIT](LICENSE)

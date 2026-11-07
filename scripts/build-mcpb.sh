@@ -8,7 +8,7 @@ stage=$(mktemp -d)
 trap 'rm -rf "$stage"' EXIT
 
 npm run build
-cp -r dist package.json package-lock.json LICENSE README.md "$stage/"
+cp -r dist package.json package-lock.json LICENSE README.md README.en.md "$stage/"
 [ -d data ] && cp -r data "$stage/" && rm -f "$stage/data/catalog.sample.json"
 node -e "
   const fs = require('fs');
